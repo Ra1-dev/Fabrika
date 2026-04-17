@@ -1,0 +1,431 @@
+"""
+YouTube Scraper v2 — Maximum coverage.
+60+ targeted search queries to capture Claude/Anthropic content comprehensively.
+API budget: ~6,500 of 10,000 free daily quota units.
+Usage: python3 youtube_scraper_v2.py                 # reads YOUTUBE_API_KEY from .env
+       python3 youtube_scraper_v2.py YOUR_API_KEY    # or pass directly
+"""
+import sys
+import json
+import csv
+import os
+import argparse
+from datetime import datetime
+from dotenv import load_dotenv
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+STAGE1_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+OUTPUT_DIR = os.path.join(STAGE1_DIR, "output", "raw", "youtube")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+
+def load_config():
+    config_path = os.path.join(os.path.dirname(__file__), "../../../topic_config.json")
+    with open(config_path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+config = load_config()
+SEARCH_QUERIES = config["youtube"]["search_queries"]
+MAX_RESULTS_PER_QUERY = config["youtube"].get("max_results_per_query", 10)
+MAX_ITEMS = config["youtube"].get("max_results_per_query", 33) * len(SEARCH_QUERIES)
+
+EXCLUDE_KEYWORDS = [
+    "van damme", "jean-claude", "jean claude", "kickboxer",
+    "debussy", "monet", "claude rains", "claude giroux",
+    "gaming", "minecraft", "fortnite", "music video",
+    "handwriting", "roommate", "make friends",
+    "namma", "apna", "omr sheet", "answer sheet", "exam tips",
+    "high school is famous", "trauma wins", "quizard",
+    "gaokao", "tamil nadu", "engineering colleges",
+    "india", "chinese students", "jee", "neet",
+    "snuck into", "tattoos", "balloon", "dance floor",
+    "rich kids", "ambanis", "graduation prank",
+    "college fest", "dance", "vlog", "spend", "nyc",
+    "hired by elon", "no college degree", "finals week",
+    "dating", "love", "relationship", "pop the balloon",
+    "grooming", "fashion tips", "sports commitment",
+    "shorts comedy", "trauma dumping", "gone wrong shorts",
+    "never went to harvard", "lawyers", "football",
+    "commitment football", "sports commitment", "CBS sports",
+    "valorant", "gaming", "sheldon", "big bang",
+    "delete your fear", "58 sec", "dan martell",
+    "motivational", "fear of rejection", "entrepreneur",
+    "cbs sports", "tricked mom", "his commitment"
+]
+
+REQUIRE_ANY = [
+    "admissions", "application", "apply", "applicant",
+    "common app", "commonapp", "sat", "act score",
+    "ivy league", "harvard", "stanford", "mit", "yale",
+    "princeton", "columbia", "cornell", "dartmouth",
+    "college essay", "personal statement",
+    "extracurricular", "counselor", "consultant",
+    "acceptance", "rejection", "waitlist", "defer",
+    "financial aid", "scholarship", "fafsa",
+    "collegevine", "naviance", "chanceme",
+    "early decision", "early action", "regular decision",
+    "recommendation letter", "college list", "college prep",
+    "high school senior", "junior year", "college bound"
+]
+
+
+def safe_console_text(text):
+    """Return text safe to print on consoles with non-UTF encodings."""
+    enc = sys.stdout.encoding or "utf-8"
+    return str(text).encode(enc, errors="replace").decode(enc, errors="replace")
+
+
+def get_video_details(youtube, video_ids):
+    details = {}
+    for i in range(0, len(video_ids), 50):
+        batch = video_ids[i:i+50]
+        try:
+            resp = youtube.videos().list(
+                part="statistics,contentDetails,snippet",
+                id=",".join(batch)
+            ).execute()
+        except HttpError as e:
+            if is_quota_exceeded_error(e):
+                print("    Quota exceeded while fetching video details. Stopping enrichment.")
+                return details, True
+            raise
+        for item in resp.get("items", []):
+            vid = item["id"]
+            stats = item.get("statistics", {})
+            snippet = item.get("snippet", {})
+            details[vid] = {
+                "views": int(stats.get("viewCount", 0)),
+                "likes": int(stats.get("likeCount", 0)),
+                "comments": int(stats.get("commentCount", 0)),
+                "duration": item.get("contentDetails", {}).get("duration", ""),
+                "channel_subs": None,
+                "tags": snippet.get("tags", []),
+                "description_snippet": snippet.get("description", "")[:200],
+            }
+    return details, False
+
+
+def get_channel_info(youtube, channel_ids):
+    """Get subscriber counts for channels."""
+    info = {}
+    unique_ids = list(set(channel_ids))
+    for i in range(0, len(unique_ids), 50):
+        batch = unique_ids[i:i+50]
+        try:
+            resp = youtube.channels().list(
+                part="statistics",
+                id=",".join(batch)
+            ).execute()
+        except HttpError as e:
+            if is_quota_exceeded_error(e):
+                print("    Quota exceeded while fetching channel stats. Skipping remaining channel enrichment.")
+                return info, True
+            raise
+        for item in resp.get("items", []):
+            stats = item.get("statistics", {})
+            info[item["id"]] = int(stats.get("subscriberCount", 0))
+    return info, False
+
+
+def is_quota_exceeded_error(error):
+    """Return True when Google API error indicates daily quota exhaustion."""
+    if not isinstance(error, HttpError):
+        return False
+    if getattr(error.resp, "status", None) != 403:
+        return False
+    message = str(error).lower()
+    return "quotaexceeded" in message or "exceeded your quota" in message
+
+
+def search_youtube(youtube, query, max_results=50):
+    print(f"  Searching: '{query}'...")
+    all_items = []
+    next_page = None
+    while len(all_items) < max_results:
+        try:
+            request = youtube.search().list(
+                part="snippet",
+                q=query,
+                type="video",
+                order="viewCount",
+                publishedAfter="2023-01-01T00:00:00Z",
+                maxResults=min(50, max_results - len(all_items)),
+                pageToken=next_page,
+            )
+            resp = request.execute()
+        except HttpError as e:
+            if is_quota_exceeded_error(e):
+                print(f"    Error: {e}")
+                print("    Quota exceeded. Stopping remaining queries for this run.")
+                return all_items, True
+            print(f"    Error: {e}")
+            break
+        except Exception as e:
+            print(f"    Error: {e}")
+            break
+        items = resp.get("items", [])
+        if not items:
+            break
+        all_items.extend(items)
+        next_page = resp.get("nextPageToken")
+        if not next_page:
+            break
+    print(f"    Found {len(all_items)} videos")
+    return all_items, False
+
+
+def is_relevant(title):
+    """Check if video is actually about Claude AI."""
+    t = title.lower()
+    if any(kw in t for kw in EXCLUDE_KEYWORDS):
+        return False
+    if any(kw in t for kw in REQUIRE_ANY):
+        return True
+    return False
+
+
+# NOTE: Classification moved to stage1/analysis pipeline (LLM-based).
+# Kept here for reference only.
+# def classify_content_type(title):
+def _classify_content_type_DISABLED(title):
+    t = title.lower()
+    if any(w in t for w in [" vs ", "versus", "compared", "comparison", "better",
+                             "which is", "which one", "battle", "showdown", "face off"]):
+        return "Comparison"
+    elif any(w in t for w in ["tutorial", "how to", "guide", "learn", "beginner",
+                               "step by step", "tips", "tricks", "course", "master"]):
+        return "Tutorial"
+    elif any(w in t for w in ["review", "honest", "my thoughts", "opinion", "worth it",
+                               "tested", "testing", "hands on", "hands-on"]):
+        return "Review"
+    elif any(w in t for w in ["i built", "i made", "i used", "workflow", "use case",
+                               "demo", "project", "showcase", "watch me", "using",
+                               "built with", "made with", "automate", "automation"]):
+        return "Use Case"
+    elif any(w in t for w in ["news", "announced", "just dropped", "release", "update",
+                               "new model", "launch", "breaking", "leaked",
+                               "just released", "pricing", "free tier"]):
+        return "News"
+    elif any(w in t for w in ["insane", "mind-blowing", "mind blowing", "incredible",
+                               "game changer", "game-changer", "wow", "crazy", "amazing",
+                               "holy", "blown away", "changed everything", "can't believe",
+                               "shocking", "unbelievable", "next level"]):
+        return "Reaction"
+    elif any(w in t for w in ["100 seconds", "explained", "what is", "introduction",
+                               "understand", "in simple terms", "overview"]):
+        return "Explainer"
+    elif any(w in t for w in ["interview", "podcast", "conversation", "talk",
+                               "fireside", "keynote", "summit"]):
+        return "Interview"
+    return "General"
+
+
+# def classify_feature(title):
+def _classify_feature_DISABLED(title):
+    t = title.lower()
+    if "artifact" in t:
+        return "Artifacts"
+    elif "sonnet" in t and ("3.5" in t or "3.6" in t):
+        return "Sonnet 3.5"
+    elif "sonnet" in t and ("4" in t or "3.7" in t):
+        return "Sonnet 4"
+    elif "opus" in t:
+        return "Opus"
+    elif "haiku" in t:
+        return "Haiku"
+    elif "computer use" in t:
+        return "Computer Use"
+    elif "claude code" in t or "cli" in t:
+        return "Claude Code"
+    elif "mcp" in t or "model context" in t:
+        return "MCP"
+    elif any(w in t for w in ["code", "coding", "programming", "developer"]):
+        return "Coding"
+    elif any(w in t for w in ["writing", "write", "essay", "creative"]):
+        return "Writing"
+    elif "api" in t:
+        return "API"
+    elif any(w in t for w in ["dario", "amodei", "anthropic"]):
+        return "Company/Leadership"
+    elif "safety" in t or "alignment" in t:
+        return "AI Safety"
+    return "General"
+
+
+def main():
+    parser = argparse.ArgumentParser(description="YouTube scraper for Claude growth monitoring")
+    parser.add_argument("api_key", nargs="?", default=None, help="Optional YouTube API key")
+    parser.add_argument(
+        "--max-items",
+        type=int,
+        required=False,
+	default=MAX_ITEMS,
+        help="Maximum number of unique relevant videos to collect before stopping.",
+    )
+    args = parser.parse_args()
+
+    load_dotenv()
+    api_key = (args.api_key or os.getenv("YOUTUBE_API_KEY") or "").strip()
+    if args.max_items <= 0:
+        parser.error("--max-items must be a positive integer")
+    max_items = args.max_items
+
+    if not api_key:
+        print("ERROR: No YouTube API key provided.")
+        print("  Option 1: Set YOUTUBE_API_KEY in .env file")
+        print("  Option 2: python youtube_scraper_v2.py YOUR_API_KEY")
+        print("  Get a free key: https://console.cloud.google.com/")
+        return
+
+    print("=" * 60)
+    print("CLAUDE GROWTH — YOUTUBE SCRAPER v2")
+    print(f"Max items: {max_items}")
+    print(f"Running {len(SEARCH_QUERIES)} search queries")
+    print(f"Estimated API cost: ~{len(SEARCH_QUERIES) * 100 + 500} / 10,000 quota units")
+    print("=" * 60)
+
+    youtube = build("youtube", "v3", developerKey=api_key)
+
+    all_videos = []
+    seen_ids = set()
+    skipped_irrelevant = 0
+    quota_exceeded = False
+
+    for i, query in enumerate(SEARCH_QUERIES):
+        if len(all_videos) >= max_items:
+            print("\nReached max-items limit; stopping query loop.")
+            break
+        print(f"\n[{i+1}/{len(SEARCH_QUERIES)}] {query}")
+        items, query_quota_exceeded = search_youtube(youtube, query, MAX_RESULTS_PER_QUERY)
+        if query_quota_exceeded:
+            quota_exceeded = True
+            break
+
+        video_ids = [item["id"]["videoId"] for item in items if "videoId" in item.get("id", {})]
+        if not video_ids:
+            continue
+
+        details, details_quota_exceeded = get_video_details(youtube, video_ids)
+        if details_quota_exceeded:
+            quota_exceeded = True
+            break
+
+        for item in items:
+            if len(all_videos) >= max_items:
+                break
+            vid = item["id"].get("videoId", "")
+            if not vid or vid in seen_ids:
+                continue
+
+            snippet = item.get("snippet", {})
+            title = snippet.get("title", "")
+
+            # Filter irrelevant
+            if not is_relevant(title):
+                skipped_irrelevant += 1
+                continue
+
+            seen_ids.add(vid)
+            stats = details.get(vid, {})
+            pub_date = snippet.get("publishedAt", "")[:10]
+
+            all_videos.append({
+                "platform": "YouTube",
+                "video_id": vid,
+                "channel": snippet.get("channelTitle", ""),
+                "channel_id": snippet.get("channelId", ""),
+                "title": title,
+                "date": pub_date,
+                "views": stats.get("views", 0),
+                "likes": stats.get("likes", 0),
+                "comments": stats.get("comments", 0),
+                "duration": stats.get("duration", ""),
+                "url": f"https://youtube.com/watch?v={vid}",
+                # Classification moved to stage1/analysis pipeline
+                # "content_type": classify_content_type(title),
+                # "claude_feature": classify_feature(title),
+                "search_query": query,
+                "tags": "|".join(stats.get("tags", [])[:5]),
+                "description_snippet": stats.get("description_snippet", ""),
+            })
+
+        if len(all_videos) >= max_items:
+            print("  Reached max-items limit during item collection.")
+            break
+
+    # Get channel subscriber counts
+    print("\n\nFetching channel subscriber data...")
+    channel_ids = list(set(v["channel_id"] for v in all_videos if v["channel_id"]))
+    channel_subs, channel_quota_exceeded = get_channel_info(youtube, channel_ids)
+    for v in all_videos:
+        v["channel_subscribers"] = channel_subs.get(v["channel_id"], 0)
+
+    if channel_quota_exceeded:
+        quota_exceeded = True
+
+    # Filter out pre-2023 noise (non-AI "Claude" videos)
+    all_videos = [v for v in all_videos if v["date"] >= "2023-01-01"]
+
+    # Sort by views
+    all_videos.sort(key=lambda x: x["views"], reverse=True)
+
+    # Save
+    output_csv = os.path.join(OUTPUT_DIR, "youtube_data.csv")
+    output_json = os.path.join(OUTPUT_DIR, "youtube_data.json")
+
+    if all_videos:
+        fieldnames = list(all_videos[0].keys())
+        with open(output_csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(all_videos)
+
+    with open(output_json, "w", encoding="utf-8") as f:
+        json.dump(all_videos, f, indent=2, ensure_ascii=False)
+
+    print(f"\n{'=' * 60}")
+    print(f"DONE! {len(all_videos)} unique relevant videos")
+    print(f"Skipped {skipped_irrelevant} irrelevant results")
+    if quota_exceeded:
+        print("Run ended early due to YouTube quotaExceeded; partial results were saved.")
+    print(f"CSV: {output_csv}")
+    print(f"{'=' * 60}")
+
+    # Stats
+    # from collections import Counter
+    print(f"\nTop 15 by views:")
+    for v in all_videos[:15]:
+        channel = safe_console_text(v.get("channel", ""))
+        title = safe_console_text(v.get("title", ""))[:55]
+        print(f"  {v['views']:>12,} views | {channel}: {title}")
+
+    # Classification stats (disabled — moved to analysis pipeline)
+    # print(f"\nContent types:")
+    # for t, c in Counter(v["content_type"] for v in all_videos).most_common():
+    #     print(f"  {t:15s} {c:4d}")
+
+    print(f"\nTop channels by total Claude views:")
+    ch_views = {}
+    ch_count = {}
+    for v in all_videos:
+        ch_views[v["channel"]] = ch_views.get(v["channel"], 0) + v["views"]
+        ch_count[v["channel"]] = ch_count.get(v["channel"], 0) + 1
+    for ch in sorted(ch_views, key=ch_views.get, reverse=True)[:15]:
+        print(f"  {ch_views[ch]:>12,} views ({ch_count[ch]} vids) | {ch}")
+
+    print(f"\nTimeline coverage:")
+    months = sorted(set(v["date"][:7] for v in all_videos))
+    if months:
+        print(f"  {months[0]} to {months[-1]} ({len(months)} months)")
+    else:
+        print("  No timeline data available.")
+
+    # print(f"\nFeatures mentioned:")
+    # for t, c in Counter(v["claude_feature"] for v in all_videos).most_common():
+    #     print(f"  {t:20s} {c:4d}")
+
+
+if __name__ == "__main__":
+    main()

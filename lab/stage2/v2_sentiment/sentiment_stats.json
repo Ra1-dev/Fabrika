@@ -1,0 +1,17 @@
+{
+  "reddit_sentiment": {
+    "mean_compound": -0.029,
+    "median_compound": 0.0,
+    "positive_pct": 23.0,
+    "neutral_pct": 48.4,
+    "negative_pct": 28.5,
+    "most_positive_type": "essay_feedback",
+    "most_negative_type": "rejection_reflection"
+  },
+  "youtube_sentiment": {
+    "mean_compound": 0.043,
+    "positive_pct": 28.4,
+    "neutral_pct": 54.8,
+    "negative_pct": 16.8
+  }
+}

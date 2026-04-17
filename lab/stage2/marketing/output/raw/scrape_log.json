@@ -1,0 +1,62 @@
+{
+  "scraped_at": "2026-04-11",
+  "keywords": [
+    "Leverage Edu",
+    "CollegeVine",
+    "Crimson Education",
+    "Edvoy study abroad",
+    "ApplyBoard",
+    "UniChances",
+    "study abroad international student",
+    "college admissions help",
+    "college counselor affordable",
+    "US college application",
+    "how to apply US university",
+    "study abroad scholarship",
+    "college admissions AI",
+    "international student university guidance"
+  ],
+  "use_serpapi": false,
+  "tiktok": {
+    "total_ads": 469,
+    "per_keyword": {
+      "Leverage Edu": 23,
+      "CollegeVine": 21,
+      "Crimson Education": 41,
+      "Edvoy study abroad": 40,
+      "ApplyBoard": 21,
+      "UniChances": 21,
+      "study abroad international student": 21,
+      "college admissions help": 39,
+      "college counselor affordable": 40,
+      "US college application": 41,
+      "how to apply US university": 41,
+      "study abroad scholarship": 40,
+      "college admissions AI": 39,
+      "international student university guidance": 41
+    },
+    "output_file": "C:\\Users\\Admin\\VGM\\lab\\stage2\\marketing\\output\\raw\\tiktok_raw.json"
+  },
+  "meta": {
+    "total_ads": 0,
+    "per_keyword": {
+      "Leverage Edu": 0,
+      "CollegeVine": 0,
+      "Crimson Education": 0,
+      "Edvoy study abroad": 0,
+      "ApplyBoard": 0,
+      "UniChances": 0,
+      "study abroad international student": 0,
+      "college admissions help": 0,
+      "college counselor affordable": 0,
+      "US college application": 0,
+      "how to apply US university": 0,
+      "study abroad scholarship": 0,
+      "college admissions AI": 0,
+      "international student university guidance": 0
+    },
+    "output_file": "C:\\Users\\Admin\\VGM\\lab\\stage2\\marketing\\output\\raw\\meta_raw.json"
+  },
+  "status": "complete",
+  "note": "TikTok and Meta both lock their APIs without auth tokens. Playwright intercepted internal JSON where available. Set SERPAPI_KEY env var for more reliable results."
+}

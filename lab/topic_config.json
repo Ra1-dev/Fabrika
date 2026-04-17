@@ -1,0 +1,128 @@
+{
+  "topic": "US college admissions counseling for high school students - chance calculation, application timeline planning, essay examples, internship and volunteering opportunities for CV improvement",
+  "description": "We're looking for discussions where students and parents express confusion about the college application process, compare admissions consulting services, share acceptance/rejection stories, ask for timeline guidance, and seek advice on building competitive profiles through extracurriculars and essays.",
+  "reddit": {
+    "subreddits": [
+      "ApplyingToCollege",
+      "chanceme",
+      "collegeresults",
+      "CollegeEssays",
+      "IntltoUSA",
+      "ECadvice",
+      "highschool",
+      "Sat",
+      "ACT",
+      "CollegeAdmissions",
+      "QuestBridge",
+      "TransferToTop25",
+      "premed",
+      "A2C_circlejerk",
+      "college"
+    ],
+    "search_queries": [
+      "chance me",
+      "college counselor",
+      "common app essay",
+      "college application",
+      "Ivy League",
+      "rejected college",
+      "waitlisted",
+      "extracurriculars",
+      "college list",
+      "summer program",
+      "college essay",
+      "admissions",
+      "CollegeVine",
+      "financial aid",
+      "first generation"
+    ],
+    "max_items": 4000
+  },
+  "youtube": {
+    "search_queries": [
+      "how to get into college",
+      "college application timeline",
+      "college admissions consultant",
+      "got into Harvard how",
+      "common app essay accepted",
+      "college application mistakes",
+      "college resume high school",
+      "extracurriculars for college",
+      "college admissions process",
+      "college counselor review",
+      "rejected from college",
+      "how to choose colleges",
+      "college essay tips",
+      "volunteer opportunities college",
+      "summer programs high school",
+      "college chances calculator",
+      "first generation college",
+      "international student US college",
+      "college financial aid explained",
+      "ivy league application tips"
+    ],
+    "max_results_per_query": 40
+  },
+  "nlp": {
+    "competitors": [
+      "CollegeVine",
+      "Naviance",
+      "Common App",
+      "Coalition App",
+      "Scoir",
+      "Niche",
+      "PrepScholar",
+      "Crimson Education",
+      "College Essay Guy",
+      "Khan Academy",
+      "Cappex",
+      "Going Merry",
+      "AdmitHub",
+      "Collegedata",
+      "counselor"
+    ],
+    "keywords_of_interest": [
+      "too late",
+      "overwhelmed",
+      "where to start",
+      "worth it",
+      "confused",
+      "waste of time",
+      "stressed",
+      "parents",
+      "don't know",
+      "need help",
+      "missed deadline",
+      "lost",
+      "expensive",
+      "afford",
+      "no guidance"
+    ]
+  },
+  "llm_classification": {
+    "content_categories": [
+      "frustration_anxiety",
+      "success_story_acceptance",
+      "beginner_question",
+      "service_comparison",
+      "timeline_deadline_panic",
+      "profile_review_request",
+      "essay_feedback",
+      "rejection_reflection"
+    ],
+    "growth_types": [
+      "organic",
+      "reactive",
+      "educational",
+      "competitive"
+    ],
+    "audiences": [
+      "high_school_juniors_seniors",
+      "anxious_parents",
+      "international_students",
+      "first_generation_students",
+      "competitive_ivy_applicants"
+    ],
+    "custom_prompt_context": "Focus on identifying specific pain points in the college admissions journey, moments where students feel lost or underserved, complaints about existing tools or counselors, and what differentiates successful application stories from struggling ones."
+  }
+}

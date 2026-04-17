@@ -1,0 +1,20 @@
+{
+  "reddit_virality": {
+    "viral_threshold_upvotes": 1387,
+    "viral_count": 39,
+    "viral_avg_title_length": 53.8,
+    "normal_avg_title_length": 46.3,
+    "viral_question_pct": 20.5,
+    "normal_question_pct": 20.7,
+    "viral_avg_upvote_ratio": 0.953,
+    "normal_avg_upvote_ratio": 0.937,
+    "most_viral_content_type": "frustration_anxiety",
+    "most_controversial_type": "essay_feedback"
+  },
+  "youtube_creator_tiers": {
+    "mega_videos": 31,
+    "mega_total_views": 156347775,
+    "micro_videos": 43,
+    "micro_total_views": 9120731
+  }
+}
