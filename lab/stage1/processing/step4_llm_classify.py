@@ -56,7 +56,7 @@ DEFAULT_MODELS = {
     "ollama": "qwen3:8b",
     "openai": "gpt-4o-mini",
     "gemini": "gemini-1.5-flash",
-    "anthropic": "claude-sonnet-4-20250514",
+    "anthropic": "claude-sonnet-4-6",
 }
 
 OLLAMA_BASE_URL = "http://localhost:11434"

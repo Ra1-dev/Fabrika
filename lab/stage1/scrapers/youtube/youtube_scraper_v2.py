@@ -32,42 +32,32 @@ MAX_RESULTS_PER_QUERY = config["youtube"].get("max_results_per_query", 10)
 MAX_ITEMS = config["youtube"].get("max_results_per_query", 33) * len(SEARCH_QUERIES)
 
 EXCLUDE_KEYWORDS = [
-    "van damme", "jean-claude", "jean claude", "kickboxer",
-    "debussy", "monet", "claude rains", "claude giroux",
+    "₹", "lakh", "crore", "rupee", "apna college",
+    "ishan sharma", "engineering facts", "scholar strategy",
+    "gokul", "cuet", "prashant kirad", "sidd ahmed",
+    "nistha", "taresh",
+    "hindi", "tamil", "telugu", "kannada", "malayalam",
+    "bengali", "marathi", "urdu", "punjabi",
+    "student", "college student", "school", "study",
+    "cuet", "jee", "neet", "cbse",
+    "rich in", "become rich", "get rich",
     "gaming", "minecraft", "fortnite", "music video",
-    "handwriting", "roommate", "make friends",
-    "namma", "apna", "omr sheet", "answer sheet", "exam tips",
-    "high school is famous", "trauma wins", "quizard",
-    "gaokao", "tamil nadu", "engineering colleges",
-    "india", "chinese students", "jee", "neet",
-    "snuck into", "tattoos", "balloon", "dance floor",
-    "rich kids", "ambanis", "graduation prank",
-    "college fest", "dance", "vlog", "spend", "nyc",
-    "hired by elon", "no college degree", "finals week",
-    "dating", "love", "relationship", "pop the balloon",
-    "grooming", "fashion tips", "sports commitment",
-    "shorts comedy", "trauma dumping", "gone wrong shorts",
-    "never went to harvard", "lawyers", "football",
-    "commitment football", "sports commitment", "CBS sports",
-    "valorant", "gaming", "sheldon", "big bang",
-    "delete your fear", "58 sec", "dan martell",
-    "motivational", "fear of rejection", "entrepreneur",
-    "cbs sports", "tricked mom", "his commitment"
+    "movie", "film", "trailer", "episode", "season",
+    "cooking", "recipe", "workout", "fitness",
+    "van damme", "jean-claude", "claude rains",
+    "claude debussy", "claude monet", "claude giroux",
 ]
 
 REQUIRE_ANY = [
-    "admissions", "application", "apply", "applicant",
-    "common app", "commonapp", "sat", "act score",
-    "ivy league", "harvard", "stanford", "mit", "yale",
-    "princeton", "columbia", "cornell", "dartmouth",
-    "college essay", "personal statement",
-    "extracurricular", "counselor", "consultant",
-    "acceptance", "rejection", "waitlist", "defer",
-    "financial aid", "scholarship", "fafsa",
-    "collegevine", "naviance", "chanceme",
-    "early decision", "early action", "regular decision",
-    "recommendation letter", "college list", "college prep",
-    "high school senior", "junior year", "college bound"
+    "learn ai", "ai course", "ai tutorial for beginners",
+    "chatgpt tutorial", "chatgpt course", "chatgpt for beginners",
+    "prompt engineering", "ai skills", "coursiv", "coursive",
+    "ai for professionals", "ai certificate", "ai without coding",
+    "non technical ai", "ai productivity", "ai side hustle",
+    "ai for business professionals", "ai upskill",
+    "master ai", "ai roadmap for beginners",
+    "ai replace job", "ai career change",
+    "learn chatgpt", "chatgpt at work",
 ]
 
 
@@ -146,6 +136,7 @@ def search_youtube(youtube, query, max_results=50):
     while len(all_items) < max_results:
         try:
             request = youtube.search().list(
+		relevanceLanguage="en",
                 part="snippet",
                 q=query,
                 type="video",
@@ -177,7 +168,6 @@ def search_youtube(youtube, query, max_results=50):
 
 
 def is_relevant(title):
-    """Check if video is actually about Claude AI."""
     t = title.lower()
     if any(kw in t for kw in EXCLUDE_KEYWORDS):
         return False

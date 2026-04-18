@@ -27,7 +27,7 @@ def load_config():
 
 config = load_config()
 SUBREDDITS = config["reddit"]["subreddits"]
-SUBREDDITS_DIRECT = SUBREDDITS[:1]
+SUBREDDITS_DIRECT = SUBREDDITS[:5]
 SUBREDDITS_SEARCH = SUBREDDITS[1:]
 SEARCH_QUERIES = config["reddit"]["search_queries"]
 MAX_ITEMS = config["reddit"].get("max_items", 500)
@@ -259,8 +259,8 @@ def main():
     max_items = args.max_items
 
     print("=" * 60)
-    print("CLAUDE GROWTH — REDDIT SCRAPER v2")
-    print("Enhanced time coverage for unbiased timeline analysis")
+    print("FABRIKA - REDDIT SCRAPER v2")
+    print("Coursiv market research — audience signal pass")
     print(f"Max items: {max_items}")
     print("=" * 60)
 
@@ -290,7 +290,7 @@ def main():
     # ========================================
     print("\n=== PHASE 1: Broad multi-subreddit scrape ===")
     for sub in SUBREDDITS:
-        for sort, tf in [("top", "all"), ("top", "year"), ("top", "month"), ("hot", None)]:
+        for sort, tf in [("top", "year"), ("top", "month"), ("hot", None)]:
             print(f"\n  r/{sub}/{sort} (t={tf})")
             posts = scrape_subreddit_top(sub, sort, tf)
             n = add_posts(posts, f"{sub.lower()}_{sort}_{tf}")
@@ -320,7 +320,7 @@ def main():
     # DONE — save
     # ========================================
     # Filter out pre-2023 noise (non-AI "Claude" posts from other subreddits)
-    all_posts = [p for p in all_posts if p["date"] >= "2023-01-01"]
+    all_posts = [p for p in all_posts if p["date"] >= "2022-01-01"]
 
     all_posts.sort(key=lambda x: x["upvotes"], reverse=True)
 

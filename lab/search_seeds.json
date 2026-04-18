@@ -1,0 +1,119 @@
+{
+  "derivation": {
+    "source_phase": "Phase 1 — Coursive Profile",
+    "source_file": "coursive_profile.md",
+    "extracted_date": "2026-04-17",
+    "purpose": "Seed terms for Phase 2 audience signal pass (Reddit, TikTok, YouTube, app reviews). Every term below is drawn from Coursiv's own positioning, not assumed from the category."
+  },
+  "pain_search_queries": [
+    "\"learn AI\" overwhelmed",
+    "\"AI tools\" \"too many\"",
+    "\"AI tools\" \"which one\"",
+    "\"ChatGPT\" beginner confused",
+    "\"ChatGPT\" \"where to start\"",
+    "AI \"left behind\"",
+    "AI \"falling behind\"",
+    "AI \"career change\"",
+    "AI \"no time\" learn",
+    "\"busy professional\" AI",
+    "AI over 45 learn",
+    "\"AI replace job\"",
+    "\"AI replace\" career"
+  ],
+  "consideration_queries": [
+    "best AI course beginner",
+    "best way learn ChatGPT",
+    "ChatGPT course worth it",
+    "\"learn AI\" app recommendation",
+    "AI learning app comparison",
+    "Coursiv vs",
+    "Coursiv review reddit",
+    "\"28 day\" AI challenge",
+    "alternative to Coursiv",
+    "AI course Udemy vs app",
+    "learn AI without coding",
+    "AI for non technical professionals"
+  ],
+  "benefit_queries": [
+    "AI \"career boost\"",
+    "AI productivity \"work smarter\"",
+    "\"AI certificate\" LinkedIn",
+    "\"prompt engineering\" learn",
+    "AI skills \"hire\" 2026",
+    "ChatGPT \"use at work\"",
+    "AI side hustle learn",
+    "AI dropshipping course"
+  ],
+  "subreddits_prioritized": [
+    {
+      "name": "r/ChatGPT",
+      "reason": "Largest ChatGPT community — primary pain/consideration signal"
+    },
+    {
+      "name": "r/ArtificialIntelligence",
+      "reason": "Broad AI discussion including beginners"
+    },
+    {
+      "name": "r/OpenAI",
+      "reason": "Tool-specific — captures users committed to learning ChatGPT"
+    },
+    {
+      "name": "r/learnmachinelearning",
+      "reason": "Explicit learner intent — watch for beginners who find it too technical (Coursiv's ICP)"
+    },
+    {
+      "name": "r/Entrepreneur",
+      "reason": "Side-hustle segment — maps to dropshipping/SMM tracks"
+    },
+    {
+      "name": "r/sidehustle",
+      "reason": "Side-hustle segment direct"
+    },
+    {
+      "name": "r/digitalnomad",
+      "reason": "Remote work segment — maps to Remote Work track"
+    },
+    {
+      "name": "r/ChatGPTPro",
+      "reason": "Power users — may mention dissatisfaction with surface-level courses"
+    },
+    {
+      "name": "r/careerchange",
+      "reason": "Career switcher segment — explicit Coursiv ICP"
+    },
+    {
+      "name": "r/productivity",
+      "reason": "'Work smarter' positioning segment"
+    },
+    {
+      "name": "r/ChatGPTCoding",
+      "reason": "Adjacent — watch for devs who started here (to understand what Coursiv explicitly excludes)"
+    }
+  ],
+  "tiktok_youtube_search_terms": [
+    "learn AI 2026",
+    "best AI tools beginner",
+    "ChatGPT tutorial beginner",
+    "AI course review",
+    "how to use ChatGPT at work",
+    "AI career",
+    "AI for non programmers",
+    "AI skills resume",
+    "prompt engineering tutorial",
+    "Coursiv review"
+  ],
+  "app_store_targets": [
+    {
+      "app_name": "Coursiv",
+      "ios_id": "TBD — pull via app-store-scraper",
+      "google_play_id": "io.zimran.coursiv",
+      "priority": "HIGH — primary target reviews for pain/benefit extraction"
+    }
+  ],
+  "notes_for_phase_2_executor": [
+    "Watch for the 'two audiences' tension identified in coursive_profile.md section 8 — professional upskiller vs side-hustler. Tag which segment each insight maps to.",
+    "Watch for spelling variations: Coursiv, Coursive, Cursiv. All three appear in real user mentions.",
+    "When extracting consideration sets, tag sentiment (recommended / complained about / compared / dismissed) — this feeds Phase 3 Signal 1 directly.",
+    "Prioritize verbatim quotes over paraphrased insights. Direct quotes will be needed for creative copy in Phase 6."
+  ]
+}

@@ -1,128 +1,307 @@
 {
-  "topic": "US college admissions counseling for high school students - chance calculation, application timeline planning, essay examples, internship and volunteering opportunities for CV improvement",
-  "description": "We're looking for discussions where students and parents express confusion about the college application process, compare admissions consulting services, share acceptance/rejection stories, ask for timeline guidance, and seek advice on building competitive profiles through extracurriculars and essays.",
+  "topic": "AI learning app for non-technical busy professionals",
+  "description": "Research focus: understand how non-technical, time-constrained professionals and career-switchers discover, evaluate, and abandon AI learning products — with emphasis on the language they use to describe overwhelm, comparison shopping, and desired outcomes like career advancement and side-hustle monetization.",
   "reddit": {
     "subreddits": [
-      "ApplyingToCollege",
-      "chanceme",
-      "collegeresults",
-      "CollegeEssays",
-      "IntltoUSA",
-      "ECadvice",
-      "highschool",
-      "Sat",
-      "ACT",
-      "CollegeAdmissions",
-      "QuestBridge",
-      "TransferToTop25",
-      "premed",
-      "A2C_circlejerk",
-      "college"
+      "careerchange",
+      "productivity", 
+      "sidehustle",
+      "Entrepreneur",
+      "digitalnomad",
+      "ChatGPTPro",
+      "learnprogramming",
+      "personalfinance",
+      "jobs",
+      "ChatGPT",
+      "OpenAI",
+      "learnmachinelearning",
+      "MachineLearning"
     ],
     "search_queries": [
-      "chance me",
-      "college counselor",
-      "common app essay",
-      "college application",
-      "Ivy League",
-      "rejected college",
-      "waitlisted",
-      "extracurriculars",
-      "college list",
-      "summer program",
-      "college essay",
-      "admissions",
-      "CollegeVine",
-      "financial aid",
-      "first generation"
+      "learn AI overwhelmed where to start",
+      "AI tools too many which one should I use",
+      "ChatGPT beginner confused",
+      "AI falling behind career",
+      "AI replace job what to do",
+      "best AI course beginner non technical",
+      "learn AI without coding recommendation",
+      "Coursiv review",
+      "Coursiv vs",
+      "alternative to Coursiv",
+      "AI course Udemy vs app",
+      "busy professional no time learn AI",
+      "AI career change over 45",
+      "28 day AI challenge",
+      "AI skills hire 2026",
+      "prompt engineering learn beginner",
+      "ChatGPT use at work productivity",
+      "AI side hustle course"
     ],
-    "max_items": 4000
+    "max_items": 500
   },
   "youtube": {
     "search_queries": [
-      "how to get into college",
-      "college application timeline",
-      "college admissions consultant",
-      "got into Harvard how",
-      "common app essay accepted",
-      "college application mistakes",
-      "college resume high school",
-      "extracurriculars for college",
-      "college admissions process",
-      "college counselor review",
-      "rejected from college",
-      "how to choose colleges",
-      "college essay tips",
-      "volunteer opportunities college",
-      "summer programs high school",
-      "college chances calculator",
-      "first generation college",
-      "international student US college",
-      "college financial aid explained",
-      "ivy league application tips"
+      "learn AI 2026 beginner no coding",
+      "best AI tools beginner 2026",
+      "ChatGPT tutorial beginner where to start",
+      "AI course review worth it",
+      "how to use ChatGPT at work",
+      "AI for non programmers non technical",
+      "AI career boost skills resume",
+      "prompt engineering tutorial beginner",
+      "Coursiv review",
+      "AI learning app comparison review",
+      "best way to learn ChatGPT busy professional",
+      "AI replace job what to learn",
+      "AI certificate LinkedIn worth it",
+      "AI side hustle learn 2026",
+      "learn AI overwhelmed where to start",
+      "AI dropshipping course tutorial"
     ],
-    "max_results_per_query": 40
+    "max_results_per_query": 10
+  },
+  "google_play": {
+    "apps": [
+      {
+        "app_id": "io.zimran.coursiv",
+        "name": "Coursiv",
+        "priority": "primary",
+        "scrape_reviews": true,
+        "country": "us",
+        "lang": "en",
+        "sort": "most_relevant",
+        "count": 1000,
+        "filter_score_with": null,
+        "notes": "Pull all ratings. Tag 1-star and 5-star extremes for pain/benefit extraction."
+      }
+    ],
+    "extract_signals": [
+      "competitor mentions in review text",
+      "cancellation reasons",
+      "feature requests",
+      "comparison language (better than, worse than, switched from)",
+      "verbatim pain vocabulary",
+      "verbatim benefit vocabulary"
+    ]
+  },
+  "apple_app_store": {
+    "apps": [
+      {
+        "app_id": "6478281150",
+        "name": "Coursiv - AI Tools Mastery",
+        "priority": "primary",
+        "country": "us",
+        "sort": "mostRecent",
+        "count": 500,
+        "notes": "Original app, most reviews. Main source."
+      },
+      {
+        "app_id": "6758934906",
+        "name": "Coursiv - AI Certificates",
+        "priority": "secondary",
+        "country": "us",
+        "sort": "mostRecent",
+        "count": 200,
+        "notes": "Newer rebranded app. Pull for recent user language."
+      }
+    ],
+    "extract_signals": [
+      "competitor mentions in review text",
+      "cancellation reasons",
+      "feature requests",
+      "comparison language",
+      "verbatim pain vocabulary",
+      "verbatim benefit vocabulary"
+    ]
+  },
+  "meta_ads": {
+    "target_pages": [
+      {
+        "page_name": "Coursiv",
+        "search_term": "Coursiv",
+        "priority": "primary — pull ALL ads for Phase 1A",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Our own product. Pull every ad to understand what they are testing."
+      },
+      {
+        "page_name": "Brilliant",
+        "search_term": "Brilliant.org",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Direct competitor — interactive learning app"
+      },
+      {
+        "page_name": "Codecademy",
+        "search_term": "Codecademy",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Competitor — coding and AI skills"
+      },
+      {
+        "page_name": "DataCamp",
+        "search_term": "DataCamp",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Competitor — data and AI skills"
+      },
+      {
+        "page_name": "Skillshare",
+        "search_term": "Skillshare",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Adjacent competitor — creative and professional skills"
+      },
+      {
+        "page_name": "LinkedIn Learning",
+        "search_term": "LinkedIn Learning",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Adjacent competitor — professional upskilling with certificate positioning"
+      },
+      {
+        "page_name": "DeepLearning.AI",
+        "search_term": "DeepLearning.AI",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Competitor — AI-specific courses, may skew technical but overlaps on prompt engineering"
+      },
+      {
+        "page_name": "Udemy",
+        "search_term": "Udemy",
+        "priority": "adjacent",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Large adjacent competitor — explicitly named in Coursiv seed vocabulary"
+      },
+      {
+        "page_name": "Prompt Engineering Institute",
+        "search_term": "Prompt Engineering Institute",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Niche competitor — prompt engineering positioning overlaps directly with Coursiv benefit vocabulary"
+      },
+      {
+        "page_name": "AI For Anyone",
+        "search_term": "AI For Anyone",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "Non-technical AI learning positioning — direct ICP overlap"
+      },
+      {
+        "page_name": "Founderz",
+        "search_term": "Founderz AI",
+        "priority": "competitor",
+        "country": "ALL",
+        "active_status": "all",
+        "notes": "AI business skills learning app — overlaps on entrepreneur/side-hustle segment"
+      }
+    ],
+    "extract_signals": [
+      "hook (first line of copy or first 3 seconds)",
+      "format (UGC / talking head / screen recording / static / carousel / animation)",
+      "offer structure (free trial / discount / guarantee / social proof)",
+      "pain point addressed",
+      "LF8 emotional driver",
+      "CTA text",
+      "landing page URL",
+      "duration active (days running)",
+      "number of active variations (scaling signal)"
+    ],
+    "performance_filter": {
+      "min_days_running": 14,
+      "notes": "Ads running 14+ days are likely profitable. Sort by duration descending. Country = ALL per TA requirement. Strategy output will filter to US audience lens."
+    }
   },
   "nlp": {
     "competitors": [
-      "CollegeVine",
-      "Naviance",
-      "Common App",
-      "Coalition App",
-      "Scoir",
-      "Niche",
-      "PrepScholar",
-      "Crimson Education",
-      "College Essay Guy",
+      "Brilliant",
+      "Codecademy",
+      "DataCamp",
+      "Skillshare",
+      "LinkedIn Learning",
+      "DeepLearning.AI",
+      "Udemy",
+      "Coursera",
       "Khan Academy",
-      "Cappex",
-      "Going Merry",
-      "AdmitHub",
-      "Collegedata",
-      "counselor"
+      "Duolingo",
+      "Founderz",
+      "AI For Anyone",
+      "Futurepedia"
     ],
     "keywords_of_interest": [
-      "too late",
       "overwhelmed",
+      "too many AI tools",
       "where to start",
-      "worth it",
-      "confused",
-      "waste of time",
-      "stressed",
-      "parents",
-      "don't know",
-      "need help",
-      "missed deadline",
-      "lost",
-      "expensive",
-      "afford",
-      "no guidance"
+      "left behind",
+      "falling behind",
+      "no time",
+      "busy professional",
+      "career change",
+      "replace my job",
+      "non technical",
+      "without coding",
+      "28 day",
+      "prompt engineering",
+      "AI certificate",
+      "work smarter",
+      "side hustle",
+      "AI dropshipping",
+      "use at work",
+      "AI skills",
+      "career boost"
+    ],
+    "spelling_variants": [
+      "Coursiv",
+      "Coursive",
+      "Cursiv"
     ]
   },
   "llm_classification": {
     "content_categories": [
-      "frustration_anxiety",
-      "success_story_acceptance",
+      "frustration_time_constraints",
+      "technical_barrier_complaint",
       "beginner_question",
-      "service_comparison",
-      "timeline_deadline_panic",
-      "profile_review_request",
-      "essay_feedback",
-      "rejection_reflection"
+      "success_story",
+      "platform_comparison",
+      "career_transition_anxiety",
+      "course_recommendation",
+      "abandonment_regret",
+      "consideration_set_signal"
     ],
     "growth_types": [
       "organic",
-      "reactive",
+      "reactive", 
       "educational",
       "competitive"
     ],
     "audiences": [
-      "high_school_juniors_seniors",
-      "anxious_parents",
-      "international_students",
-      "first_generation_students",
-      "competitive_ivy_applicants"
+      "busy_knowledge_worker_28_50",
+      "career_switcher_45_plus",
+      "aspiring_entrepreneur_sidehustler",
+      "remote_worker_freelancer",
+      "absolute_beginner_curious_explorer"
     ],
-    "custom_prompt_context": "Focus on identifying specific pain points in the college admissions journey, moments where students feel lost or underserved, complaints about existing tools or counselors, and what differentiates successful application stories from struggling ones."
+    "custom_prompt_context": "You are analyzing user-generated content (Reddit posts, YouTube comments, app reviews, and social media text) for a competitive intelligence project focused on AI learning products targeting non-technical, time-constrained professionals. For each piece of content, extract the following: (1) CONSIDERATION SET — list every learning product, app, platform, or course mentioned by name, and tag each with sentiment: recommended / complained_about / compared / dismissed / neutral. Flag any mentions of Coursiv, Coursive, or Cursiv as highest priority. (2) VERBATIM PAIN LANGUAGE — copy exact phrases (do not paraphrase) that express overwhelm with AI tools, fear of being left behind, lack of time to learn, confusion about where to start, career anxiety, or feeling that AI is too technical. Match against seed vocabulary: overwhelmed, too many AI tools, where to start, left behind, falling behind, no time, busy professional, career change, replace my job, non technical, without coding. (3) VERBATIM BENEFIT LANGUAGE — copy exact phrases expressing desired outcomes: career boost, work smarter, side hustle income, AI certificate, prompt engineering mastery, using AI at work, hiring advantage in 2026. (4) AUDIENCE SEGMENT — classify the author into exactly one of: busy_knowledge_worker_28_50, career_switcher_45_plus, aspiring_entrepreneur_sidehustler, remote_worker_freelancer, or absolute_beginner_curious_explorer. Use context clues (job title, age mentions, stated goals, subreddit context) to justify the classification. (5) CONTENT CATEGORY — assign one primary category from: frustration_time_constraints, technical_barrier_complaint, beginner_question, success_story, platform_comparison, career_transition_anxiety, course_recommendation, abandonment_regret, consideration_set_signal. Prioritize extracting direct quotes over summaries. Every extracted insight must include the source URL or review ID, the platform, and the verbatim text that triggered the classification."
+  },
+  "_confirmed_ids": {
+    "google_play_id": "io.zimran.coursiv",
+    "ios_app_id_main": "6478281150",
+    "ios_app_id_certificates": "6758934906",
+    "ios_app_id_junior": "6749324183",
+    "trustpilot_domain": "coursiv.io"
+  },
+  "_derivation": {
+    "seeds_file": "lab/search_seeds.json",
+    "generated_by": "config_generator.py v2",
+    "note": "All queries derived from Phase 1 search_seeds.json. App IDs hardcoded from Phase 1 web research."
   }
 }
