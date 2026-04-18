@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fabrika — Coursiv Research Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f0f13;color:#e0e0e0;padding:24px;line-height:1.5}
+h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:4px}
+.subtitle{color:#666;font-size:14px;margin-bottom:32px}
+h2{font-size:12px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px}
+h3{font-size:14px;font-weight:600;color:#bbb;margin:18px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px}
+.card{background:#1a1a24;border:1px solid #2a2a3a;border-radius:12px;padding:20px}
+.card-full{grid-column:1/-1}
+.stat-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:#12121a;border-radius:8px;padding:16px;flex:1;min-width:110px;text-align:center}
+.stat-value{font-size:26px;font-weight:700;color:#6366f1}
+.stat-label{font-size:11px;color:#666;margin-top:4px}
+.bar-chart{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:12px;color:#bbb;width:190px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:#1e1e2e;border-radius:4px;height:18px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-value{font-size:11px;color:#666;width:44px;text-align:right;flex-shrink:0}
+.insight{background:#1a1228;border-left:3px solid #6366f1;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:12px}
+.insight .num{font-size:11px;color:#6366f1;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.insight p{font-size:13px;color:#d1d5db;margin-bottom:8px}
+.insight.green{background:#0d1f1a;border-color:#10b981}.insight.green .num{color:#10b981}
+.insight.amber{background:#1a1505;border-color:#f59e0b}.insight.amber .num{color:#f59e0b}
+.insight.red{background:#1a0a0a;border-color:#ef4444}.insight.red .num{color:#ef4444}
+.bilingual{background:#12121a;border-radius:8px;padding:12px;margin-top:8px;font-size:12px;line-height:1.6}
+.lang-en{color:#a5b4fc;margin-bottom:4px}.lang-ru{color:#86efac}
+.lang-tag{display:inline-block;background:#1e1e30;color:#666;padding:0 5px;border-radius:3px;font-size:10px;font-weight:700;margin-right:4px}
+.hook-card{background:#12121a;border-radius:8px;padding:12px;margin-bottom:10px;border:1px solid #1e1e2e}
+.hook-text{font-size:14px;color:#e0e0e0;font-weight:600;margin-bottom:6px}
+.hook-meta{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.tag{background:#1e1e30;color:#9ca3af;padding:2px 8px;border-radius:4px;font-size:11px}
+.tag.days{background:#1f2d1f;color:#6ee7b7}
+.tag.type{background:#1e1e30;color:#a5b4fc}
+.hook-why{font-size:12px;color:#888;font-style:italic;line-height:1.5}
+.hook-gap{font-size:12px;color:#f59e0b;margin-top:6px}
+.comp-table{width:100%;border-collapse:collapse;font-size:12px}
+.comp-table th{text-align:left;color:#555;padding:6px 8px;border-bottom:1px solid #2a2a3a;font-weight:600}
+.comp-table td{padding:6px 8px;border-bottom:1px solid #1a1a24;vertical-align:top}
+.comp-table tr:hover td{background:#1e1e2a}
+.ad-url{font-size:11px;color:#6366f1;text-decoration:none}
+.ad-url:hover{text-decoration:underline}
+.competitor-ad{background:#12121a;border-radius:8px;padding:12px;margin-bottom:10px;border:1px solid #1e1e2e}
+.competitor-ad .page{font-size:13px;font-weight:700;color:#e0e0e0;margin-bottom:4px}
+.competitor-ad .copy{font-size:12px;color:#aaa;line-height:1.5;margin-bottom:8px;font-style:italic}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.task-card{background:#0d1f1a;border:1px solid #10b981;border-radius:8px;padding:16px}
+.task-card.amber{background:#1a1505;border-color:#f59e0b}
+.task-title{font-size:13px;font-weight:700;color:#10b981;margin-bottom:8px}
+.task-card.amber .task-title{color:#f59e0b}
+.task-card p{font-size:12px;color:#aaa;line-height:1.7}
+hr{border:none;border-top:1px solid #2a2a3a;margin:20px 0}
+</style>
+</head>
+<body>
+
+<h1>Fabrika — Coursiv Market Research Dashboard</h1>
+<p class="subtitle">Generated: 2026-04-18 08:12 &nbsp;·&nbsp; Analyst: Rauan &nbsp;·&nbsp; Project: Zimran.io Marketing Analyst Test Task</p>
+
+<div class="stat-row">
+  <div class="stat"><div class="stat-value">6,293</div><div class="stat-label">Coursiv Ads Scraped</div></div>
+  <div class="stat"><div class="stat-value">67</div><div class="stat-label">Currently Active</div></div>
+  <div class="stat"><div class="stat-value">384</div><div class="stat-label">Proven 30+ Days</div></div>
+  <div class="stat"><div class="stat-value">145</div><div class="stat-label">Competitor Ads</div></div>
+  <div class="stat"><div class="stat-value">1,000</div><div class="stat-label">App Reviews</div></div>
+  <div class="stat"><div class="stat-value">1,998</div><div class="stat-label">Reddit Posts</div></div>
+  <div class="stat"><div class="stat-value">92</div><div class="stat-label">Advertisers Found</div></div>
+</div>
+
+<div class="grid">
+
+<div class="card card-full">
+  <h2>Key Strategic Findings / Ключевые стратегические выводы</h2>
+  <div class="insight">
+    <div class="num">Finding 1 — One Hook Rules Everything</div>
+    <p>Coursiv runs 15 unique copy variants across 451 high-signal ads. Every single one uses the same LF8 driver: <strong>to_be_superior_winning_keeping_up</strong>. Best performer: “Kick-start your AI No-Code journey with Coursiv 🚀” — ran 181 days. All 6 other LF8 drivers untested.</p>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Coursiv found one emotional trigger that converts and is running it globally across 10+ languages. Strength (proven formula) AND critical vulnerability — any competitor testing an alternative emotional angle can outflank them.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Coursiv нашёл один эмоциональный триггер, который конвертирует, и использует его глобально на 10+ языках. Это одновременно сила (проверенная формула) И критическая уязвимость — любой конкурент, протестировавший альтернативный эмоциональный угол, может их обойти.</div>
+    </div>
+  </div>
+  <div class="insight green">
+    <div class="num">Finding 2 — Zero Format Diversity = Opportunity</div>
+    <p>73% of proven ads are text-overlay-video with polished visual style. No UGC, no testimonials, no talking heads anywhere in their entire ad account.</p>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Coursiv has never tested UGC or talking-head testimonial formats. In a category where the audience is skeptical of marketing claims, a raw authentic UGC format showing real user results could dramatically outperform their current polished style.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> никогда не тестировал UGC или форматы с отзывами реальных пользователей. Аутентичный UGC-формат с реальными результатами может резко превзойти полированный стиль Coursiv.</div>
+    </div>
+  </div>
+  <div class="insight amber">
+    <div class="num">Finding 3 — The “No-Code” Angle Is Underused</div>
+    <p>Their 181-day winner uses “No-Code” framing. But only 3 of 15 unique ads lead with this angle. Reddit shows ‘technical_barrier_complaint’ as the 3rd largest category (166 posts).</p>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> The gap between what the audience fears most (technical complexity) and what Coursiv talks about most (status/superiority) is a direct creative opportunity.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Coursiv адресует технический барьер только в 20% креативов. Разрыв между тем, чего аудитория боится больше всего, и тем, о чём говорит Coursiv, — это прямая творческая возможность.</div>
+    </div>
+  </div>
+  <div class="insight red">
+    <div class="num">Finding 4 — Competitors Copying The Same Hook</div>
+    <p>Tony Robbins: “You won’t get replaced by AI. You’ll get replaced by someone who understands how to use it.” Udemy: “Smart students are building AI agents while others chill.” The dominant hook is becoming a commodity.</p>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> The 'don't get left behind' angle is now used by Tony Robbins and Udemy. As this angle saturates, Coursiv urgently needs new emotional territory.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Угол 'don't get left behind' сейчас используют Тони Роббинс и Udemy. По мере насыщения Coursiv срочно нужна новая эмоциональная территория.</div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-full">
+  <h2>Coursiv Ad Performance Analysis / Анализ рекламы Coursiv</h2>
+  <div class="two-col">
+    <div>
+      <h3>Ad Tier Distribution / Распределение по уровням</h3>
+      <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="TIER_4_NOISE">TIER_4_NOISE</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#6366f1"></div></div>
+            <div class="bar-value">4,707</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="TIER_3_TESTED">TIER_3_TESTED</div>
+            <div class="bar-track"><div class="bar-fill" style="width:24%;background:#6366f1"></div></div>
+            <div class="bar-value">1,135</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="TIER_2_PROVEN">TIER_2_PROVEN</div>
+            <div class="bar-track"><div class="bar-fill" style="width:8%;background:#6366f1"></div></div>
+            <div class="bar-value">384</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="TIER_1_ACTIVE">TIER_1_ACTIVE</div>
+            <div class="bar-track"><div class="bar-fill" style="width:1%;background:#6366f1"></div></div>
+            <div class="bar-value">67</div>
+        </div></div>
+      <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> 74.8% of all Coursiv ads ran less than 14 days (failed tests). Only 1.1% (67 ads) are currently live. 6.1% (384 ads) ran 30+ days — these proven winners are the primary study material.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> 74.8% всей рекламы Coursiv работала менее 14 дней. Только 6.1% (384 объявления) работали 30+ дней — эти проверенные победители — основной материал для анализа.</div>
+    </div>
+    </div>
+    <div>
+      <h3>Creative Format — Proven + Active Ads Only</h3>
+      <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="video">video</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+            <div class="bar-value">306</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="image">image</div>
+            <div class="bar-track"><div class="bar-fill" style="width:47%;background:#8b5cf6"></div></div>
+            <div class="bar-value">144</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="unknown">unknown</div>
+            <div class="bar-track"><div class="bar-fill" style="width:0%;background:#8b5cf6"></div></div>
+            <div class="bar-value">1</div>
+        </div></div>
+      <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Among proven and active ads: video 67%, image 32%, carousel 1%. Coursiv has essentially never tested carousel in their winning ads.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Video 67%, изображение 32%, карусель 1%. Карусельные форматы никогда не тестировались в победных объявлениях.</div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="card card-full">
+  <h2>Coursiv Hooks Library — Ranked by Days Running / Библиотека хуков по длительности показа</h2>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Days running = performance proxy. The longer an ad ran, the more profitable it was. These hooks are ranked from best to worst performer. The 'why it works' explains the psychological mechanism. The 'gap' shows what each hook leaves unexploited.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Длительность показа = показатель эффективности. Чем дольше работало объявление, тем оно было прибыльнее. Хуки ранжированы от лучшего к худшему. 'Почему работает' объясняет психологический механизм. 'Пробел' показывает, что каждый хук оставляет неиспользованным.</div>
+    </div>
+  <div class="hook-card">
+    <div class="hook-text">"Kick-start your AI No-Code journey with Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 181d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The 'No-Code' framing removes the biggest perceived barrier to entry for non-technical audiences, making AI feel immediately accessible and achievable rather than intimidating.</div>
+    <div class='hook-gap'>&#9888; Gap: This ad ignores the fear-of-falling-behind angle entirely — a competitor could dominate by leading with a specific threat ('Your colleagues are already using AI to do your job faster') paired with a c</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Stop guessing. Start selling."</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 91d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The 'stop/start' contrast creates instant pattern interruption and frames AI as the shortcut that eliminates the painful trial-and-error loop entrepreneurs already feel every day.</div>
+    <div class='hook-gap'>&#9888; Gap: No competitor in this copy is showing a before/after of an actual bad ad transformed into a proven ad using AI, which would make the abstract promise viscerally tangible for the sidehustler segment.</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Kick-start your AI journey with Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 90d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The launch-framing ('kick-start') paired with the rocket emoji taps into the fear of being left behind on AI, making inaction feel more costly than clicking.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a concrete fear-based outcome — e.g., 'Your coworker is using AI to do your job in half the time' — directly targeting the career threat angle this ad compl</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Devenez maître des outils d'IA avec Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 82d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The word 'maître' taps directly into the status and mastery desire of professionals who fear being left behind by AI, converting existential career anxiety into aspirational identity.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a specific fear-based hook targeting the non-technical worker — e.g. 'Pas de code, pas de diplôme tech — voici comment utiliser l'IA en 28 jours' — stealing</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"In the next 5 years, AI will create more millionaires than the internet did in decades."</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 68d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 It manufactures urgency through a wealth-window narrative — implying the opportunity is time-limited and that inaction is a choice to lose, triggering loss aversion more than aspiration.</div>
+    <div class='hook-gap'>&#9888; Gap: The ad makes no mention of a non-technical or no-coding angle, leaving the absolute beginner and career-switcher segments underserved by a fear-of-failure barrier that a competitor could directly dism</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"¡Inicie su viaje hacia la IA con Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 67d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The journey framing lowers perceived barrier to entry by positioning AI learning as an accessible starting point rather than a technical mountain, directly disarming the beginner's fear of complexity.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a specific fear-based hook targeting Spanish-speaking professionals afraid of job displacement by AI, pairing it with a concrete 28-day non-technical outcom</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Dê o pontapé inicial em sua jornada de IA com o Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 64d running</span>
+      <span class="tag type">direct_offer</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The 'first step' framing lowers the psychological barrier to entry by making the commitment feel small and non-threatening for someone paralyzed by where to start.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a specific fear-based outcome — e.g. 'your colleagues are already using AI to do your job in half the time' — directly targeting the 'falling behind' anxiet</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Become a certified AI Master with Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 55d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The word 'certified' triggers status and credibility anxiety in professionals who fear being outpaced by AI-savvy peers, making the credential feel like a competitive shield.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could win by leading with a specific fear-based hook — 'Your employer is already replacing roles with AI' — then showing a concrete 28-day non-technical path, directly targeting the caree</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Boost your productivity with Coursiv 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 50d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The productivity promise taps into the fear of falling behind professionally, giving ambitious workers a guilt-free rationalization to install — it's an investment, not entertainment.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could own the 'I'm not technical' angle with a fear-based hook showing a non-coder landing a higher-paying role using AI in under 28 days — specificity and outcome-first framing this ad c</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Diventa un maestro degli strumenti di IA con Coursev 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 44d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The word 'maestro' triggers status-seeking identity transformation — it promises not just skill acquisition but a leap in perceived competence and professional superiority in an AI-saturated market.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with fear-of-obsolescence language — 'Il tuo lavoro cambierà nei prossimi 12 mesi: ecco come non restare indietro' — directly targeting the job-replacement anxie</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Inizia il tuo percorso di AI No-Code con Coursiv! 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 34d running</span>
+      <span class="tag type">direct_offer</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The 'No-Code' framing removes the single biggest perceived barrier for non-technical beginners, making AI feel immediately accessible and achievable rather than intimidating.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a specific fear-based outcome — e.g. 'Il tuo lavoro potrebbe essere sostituito dall'AI nei prossimi 12 mesi — ecco come usarla tu per primo' — targeting the</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"CoursivでAIの旅を始めよう 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 33d running</span>
+      <span class="tag type">curiosity</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The 'journey' framing paired with the rocket emoji lowers the psychological barrier to entry by making AI feel like an adventure rather than a technical obstacle, directly appealing to beginners who fear being left behin</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could dominate by leading with a specific fear-based outcome hook — such as 'AIに仕事を奪われる前に' (before AI takes your job) — targeting the career_switcher_45_plus segment with concrete 28-day </div>
+  </div><div class="hook-card">
+    <div class="hook-text">"🚀ابدأ رحلتك في تعلّم الذكاء الاصطناعي مع Coursiv"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 32d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The rocket emoji paired with 'ابدأ رحلتك' (start your journey) triggers a fear-of-missing-out response in Arabic-speaking audiences who feel left behind by the AI wave, making action feel urgent and aspirational at the s</div>
+    <div class='hook-gap'>&#9888; Gap: No competitor is directly targeting the fear of job replacement with a reassuring 'non-technical professional' angle in Arabic — an ad that opens with 'هل تخشى أن يأخذ الذكاء الاصطناعي وظيفتك؟' (Are y</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Werden Sie mit Coursiv ein Meister der KI-Tools 🚀"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 31d running</span>
+      <span class="tag type">bold_claim</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The promise of mastery over a chaotic, overwhelming AI landscape taps directly into the fear of falling behind professionally, making the aspiration of becoming an 'AI master' feel urgent and achievable.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could exploit the unaddressed angle of non-technical identity reassurance — explicitly calling out 'no coding, no tech background needed' to convert the large segment of absolute beginner</div>
+  </div><div class="hook-card">
+    <div class="hook-text">"Almaty Casting Call"</div>
+    <div class="hook-meta">
+      <span class="tag days">🕐 29d running</span>
+      <span class="tag type">curiosity</span>
+      <span class="tag">to_be_superior_winning_keeping_up</span>
+    </div>
+    <div class="hook-why">💡 The geo-specific 'casting call' framing creates intrigue and local relevance, triggering curiosity-driven clicks from Almaty-area users who feel personally called out.</div>
+    <div class='hook-gap'>&#9888; Gap: A competitor could immediately outperform this by pairing the local geo-hook with a concrete fear-based pain point — e.g. 'Almaty professionals are getting left behind by AI — here's how to catch up i</div>
+  </div>
+</div>
+
+<div class="card card-full">
+  <h2>Competitor Ads — Top Performers by Days Running / Реклама конкурентов</h2>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> These are the longest-running competitor ads found across 15 keyword searches. Noise filtered out. Long-running = profitable. Click 'View' to see the full creative on Facebook Ad Library.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Это самые долго работающие объявления конкурентов из 15 поисковых запросов. Шум отфильтрован. Долго работающие = прибыльные. Нажми 'View' для просмотра полного креатива в Facebook Ads Library.</div>
+    </div>
+  <div style="overflow-x:auto;margin-bottom:20px">
+  <table class="comp-table">
+    <tr><th>Advertiser</th><th>Days</th><th>Format</th><th>Found via Keyword</th><th>Ad Copy Preview</th><th>CTA</th><th>View</th></tr>
+    <tr>
+      <td><strong>gomycode</strong></td>
+      <td><span class="tag days">761d</span></td>
+      <td><span class="tag type">image</span></td>
+      <td><span class="tag">learn AI</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Bonjour, je suis @sghaier_amal , étudiante en développement FullStack à GOMYCODE🔥 J'ai obtenu ma licence en ge...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1068782811214496' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Udemy</strong></td>
+      <td><span class="tag days">120d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">If you’re still doing everything manually, you’re already behind. Build an AI agent that automates your workfl...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=861348993327726' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Code With Harry</strong></td>
+      <td><span class="tag days">114d</span></td>
+      <td><span class="tag type">image</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Learn Data Analytics with AI...</td>
+      <td><span class="tag">GET_OFFER_VIEW</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=846233228290942' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Udemy</strong></td>
+      <td><span class="tag days">99d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Smart students are building AI agents while others chill. The ones who start first, win first. Udemy was first...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1557327895302875' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Amazon Web Services</strong></td>
+      <td><span class="tag days">96d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">learn AI</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Every developer has THAT debugging story - the one that still gives them nightmares.  We asked #developers abo...</td>
+      <td><span class="tag">nan</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1278038773650470' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Amazon Web Services</strong></td>
+      <td><span class="tag days">86d</span></td>
+      <td><span class="tag type">image</span></td>
+      <td><span class="tag">learn AI</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">🏎️ Unlock the power of artificial intelligence and machine learning. Drive efficiencies through automation, ga...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1438911354181770' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Amazon Web Services</strong></td>
+      <td><span class="tag days">86d</span></td>
+      <td><span class="tag type">image</span></td>
+      <td><span class="tag">learn AI</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">🏎️ Unlock the power of artificial intelligence and machine learning. Drive efficiencies through automation, ga...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1697114984496740' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Langflow </strong></td>
+      <td><span class="tag days">85d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">The biggest AI competition is about to start! Subscribe with your GitHub account! 🌟  To find talents and foste...</td>
+      <td><span class="tag">APPLY_NOW</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=2013067942830743' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Udemy</strong></td>
+      <td><span class="tag days">78d</span></td>
+      <td><span class="tag type">carousel</span></td>
+      <td><span class="tag">learn AI</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Learn thousands of in-demand skills in one subscription.  From data, AI, and coding to productivity, marketing...</td>
+      <td><span class="tag">BUY_NOW</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=913098231116700' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Udemy</strong></td>
+      <td><span class="tag days">78d</span></td>
+      <td><span class="tag type">carousel</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Learn thousands of in-demand skills in one subscription.  From data, AI, and coding to productivity, marketing...</td>
+      <td><span class="tag">BUY_NOW</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=913098231116700' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>slashdevhq</strong></td>
+      <td><span class="tag days">78d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Gemini Hidden Features Day 2  Stopped wasting hours on YouTube tutorials. Just drop the YouTube link → get a p...</td>
+      <td><span class="tag">VIEW_INSTAGRAM_PROFILE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1514880676259669' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Dean Graziosi</strong></td>
+      <td><span class="tag days">78d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI overwhelmed</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">🚨 BY POPULAR DEMAND: Doors are open again When we closed registration last time, people went nuts!  So we're r...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=4362262820762890' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>St. Joan’s School, Salt La</strong></td>
+      <td><span class="tag days">76d</span></td>
+      <td><span class="tag type">image</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">🚀 SHAPE THE FUTURE. DON’T JUST STUDY IT.  Artificial Intelligence (AI) – ISC | Classes XI & XII  The world is ...</td>
+      <td><span class="tag">LEARN_MORE</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1599516297700495' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>TechTip24 Edu</strong></td>
+      <td><span class="tag days">70d</span></td>
+      <td><span class="tag type">video</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">Master Business Analysis using Power BI at just Rs 49/-  Tired of feeling stuck in your current job? 😩 The Dat...</td>
+      <td><span class="tag">SIGN_UP</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=927881579589963' target='_blank'>View →</a></td>
+    </tr><tr>
+      <td><strong>Clinilaunch Research Insti</strong></td>
+      <td><span class="tag days">69d</span></td>
+      <td><span class="tag type">carousel</span></td>
+      <td><span class="tag">AI no coding</span></td>
+      <td style="font-size:11px;color:#aaa;max-width:260px">CliniLaunch is a leading institute for healthcare training and certification. It offers online and offline cou...</td>
+      <td><span class="tag">APPLY_NOW</span></td>
+      <td><a class='ad-url' href='https://www.facebook.com/ads/library/?id=1931009510957757' target='_blank'>View →</a></td>
+    </tr>
+  </table>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3>Competitor Format Distribution</h3>
+      <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="video">video</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#f59e0b"></div></div>
+            <div class="bar-value">82</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="image">image</div>
+            <div class="bar-track"><div class="bar-fill" style="width:60%;background:#f59e0b"></div></div>
+            <div class="bar-value">49</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="carousel">carousel</div>
+            <div class="bar-track"><div class="bar-fill" style="width:17%;background:#f59e0b"></div></div>
+            <div class="bar-value">14</div>
+        </div></div>
+      <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Video 56%, image 35%, carousel 10%. The category has converged on video-first. The opportunity lies in format innovation, not format following.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Video 56%, изображение 35%, карусель 10%. Возможность — в инновации формата, а не в следовании за ним.</div>
+    </div>
+    </div>
+    <div>
+      <h3>Competitor CTA Distribution</h3>
+      <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="LEARN_MORE">LEARN_MORE</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#ec4899"></div></div>
+            <div class="bar-value">79</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="SIGN_UP">SIGN_UP</div>
+            <div class="bar-track"><div class="bar-fill" style="width:23%;background:#ec4899"></div></div>
+            <div class="bar-value">18</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="VIEW_INSTAGRAM_PROFILE">VIEW_INSTAGRAM_PROFILE</div>
+            <div class="bar-track"><div class="bar-fill" style="width:5%;background:#ec4899"></div></div>
+            <div class="bar-value">4</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="APPLY_NOW">APPLY_NOW</div>
+            <div class="bar-track"><div class="bar-fill" style="width:4%;background:#ec4899"></div></div>
+            <div class="bar-value">3</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="SHOP_NOW">SHOP_NOW</div>
+            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#ec4899"></div></div>
+            <div class="bar-value">2</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="NO_BUTTON">NO_BUTTON</div>
+            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#ec4899"></div></div>
+            <div class="bar-value">2</div>
+        </div></div>
+      <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> 'Learn More' dominates at 52% — a weak, non-committal CTA. Only 12% use 'Sign Up'. Coursiv could test more direct CTAs to differentiate.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> 'Learn More' — слабый CTA, доминирует у 52% конкурентов. Coursiv может протестировать более прямые CTA ('Start Free', 'Get Certified').</div>
+    </div>
+    </div>
+  </div>
+
+  <hr>
+  <h3>Notable Competitor Hooks — What They’re Betting On / На что ставят конкуренты</h3>
+  <div class="competitor-ad">
+    <div class="page">Udemy <span class="tag days">120d</span> <span class="tag type">video</span></div>
+    <div class="copy">"If you're still doing everything manually, you're already behind. Build an AI agent that automates your workflow and keeps your output sharp."</div>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Same fear-of-falling-behind angle as Coursiv, but leads with a specific concrete outcome (AI agent) rather than a journey. More actionable.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Тот же страх отставания, но приводит к конкретному результату (AI-агент). Более actionable, чем 'journey' Coursiv.</div>
+    </div>
+  </div>
+  <div class="competitor-ad">
+    <div class="page">Tony Robbins <span class="tag days">15d</span> <span class="tag type">video</span></div>
+    <div class="copy">"HERE’S THE TRUTH THAT NOBODY WANTS TO SAY OUT LOUD: You won’t get replaced by AI. You’ll get replaced by someone who understands how to use it."</div>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Identical core message to Coursiv. Tony Robbins entering this space signals the hook is going mainstream — losing differentiation value fast.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Идентичное сообщение Coursiv. Выход Тони Роббинса сигнализирует, что хук становится массовым и быстро теряет ценность дифференциации.</div>
+    </div>
+  </div>
+  <div class="competitor-ad">
+    <div class="page">Cisco Networking Academy <span class="tag days">60d</span> <span class="tag type">image</span></div>
+    <div class="copy">"Discover how AI can simplify your daily tasks and boost productivity. Join our free course: Introduction to Modern AI."</div>
+    <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Uses FREE as primary hook — something Coursiv never does. Free trial or free first lesson could be a major conversion lever worth testing.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Использует БЕСПЛАТНО как основной хук — Coursiv этого никогда не делает. Бесплатный пробный период может стать крупным рычагом конверсии.</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Reddit — What People Talk About (1,998 posts)</h2>
+  <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="beginner_question">beginner_question</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#6366f1"></div></div>
+            <div class="bar-value">446</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="frustration_time_constraints">frustration_time_constraints</div>
+            <div class="bar-track"><div class="bar-fill" style="width:85%;background:#6366f1"></div></div>
+            <div class="bar-value">377</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="career_transition_anxiety">career_transition_anxiety</div>
+            <div class="bar-track"><div class="bar-fill" style="width:66%;background:#6366f1"></div></div>
+            <div class="bar-value">293</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="success_story">success_story</div>
+            <div class="bar-track"><div class="bar-fill" style="width:63%;background:#6366f1"></div></div>
+            <div class="bar-value">280</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="consideration_set_signal">consideration_set_signal</div>
+            <div class="bar-track"><div class="bar-fill" style="width:47%;background:#6366f1"></div></div>
+            <div class="bar-value">211</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="technical_barrier_complaint">technical_barrier_complaint</div>
+            <div class="bar-track"><div class="bar-fill" style="width:37%;background:#6366f1"></div></div>
+            <div class="bar-value">166</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="course_recommendation">course_recommendation</div>
+            <div class="bar-track"><div class="bar-fill" style="width:23%;background:#6366f1"></div></div>
+            <div class="bar-value">103</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="platform_comparison">platform_comparison</div>
+            <div class="bar-track"><div class="bar-fill" style="width:18%;background:#6366f1"></div></div>
+            <div class="bar-value">79</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="abandonment_regret">abandonment_regret</div>
+            <div class="bar-track"><div class="bar-fill" style="width:9%;background:#6366f1"></div></div>
+            <div class="bar-value">41</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="educational">educational</div>
+            <div class="bar-track"><div class="bar-fill" style="width:0%;background:#6366f1"></div></div>
+            <div class="bar-value">1</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="aspiring_entrepreneur_sidehustler">aspiring_entrepreneur_sidehustle</div>
+            <div class="bar-track"><div class="bar-fill" style="width:0%;background:#6366f1"></div></div>
+            <div class="bar-value">1</div>
+        </div></div>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Top 3: beginner_question (446) = 'where do I start', frustration_time_constraints (377) = 'want to learn but no time', career_transition_anxiety (293) = 'fear of being replaced'. These three = Coursiv's entire value proposition, validated by 1,998 real users.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Топ-3: вопрос_новичка (446) = 'с чего начать', фрустрация_нехватка_времени (377) = 'хочу учиться, но нет времени', тревога_карьерного_перехода (293) = 'страх быть замененным'. Эти три = всё ценностное предложение Coursiv, подтверждённое 1998 реальными пользователями.</div>
+    </div>
+</div>
+
+<div class="card">
+  <h2>Reddit — Audience Segments</h2>
+  <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="busy_knowledge_worker_28_50">busy_knowledge_worker_28_50</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#10b981"></div></div>
+            <div class="bar-value">658</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="absolute_beginner_curious_explorer">absolute_beginner_curious_explor</div>
+            <div class="bar-track"><div class="bar-fill" style="width:68%;background:#10b981"></div></div>
+            <div class="bar-value">445</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="aspiring_entrepreneur_sidehustler">aspiring_entrepreneur_sidehustle</div>
+            <div class="bar-track"><div class="bar-fill" style="width:54%;background:#10b981"></div></div>
+            <div class="bar-value">358</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="remote_worker_freelancer">remote_worker_freelancer</div>
+            <div class="bar-track"><div class="bar-fill" style="width:44%;background:#10b981"></div></div>
+            <div class="bar-value">287</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="career_switcher_45_plus">career_switcher_45_plus</div>
+            <div class="bar-track"><div class="bar-fill" style="width:38%;background:#10b981"></div></div>
+            <div class="bar-value">250</div>
+        </div></div>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> No single segment dominates — genuinely diverse audience. busy_knowledge_worker_28_50 leads (658), then absolute_beginner (445), aspiring_entrepreneur (358). Validates Coursiv's multi-track approach but also explains their brand positioning confusion between 'professional upskiller' and 'side-hustler'.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Ни один сегмент не доминирует. Это подтверждает многоплановый подход Coursiv (AI Mastery, Dropshipping, Remote Work), но также объясняет путаницу с позиционированием бренда между 'профессиональным апскиллером' и 'сайд-хастлером'.</div>
+    </div>
+</div>
+
+<div class="card">
+  <h2>Google Play Reviews — Rating Distribution (1,000 reviews)</h2>
+  <div class='bar-chart'><div class="bar-row">
+            <div class="bar-label" title="5★">5★</div>
+            <div class="bar-track"><div class="bar-fill" style="width:100%;background:#14b8a6"></div></div>
+            <div class="bar-value">634</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="4★">4★</div>
+            <div class="bar-track"><div class="bar-fill" style="width:28%;background:#14b8a6"></div></div>
+            <div class="bar-value">180</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="1★">1★</div>
+            <div class="bar-track"><div class="bar-fill" style="width:24%;background:#14b8a6"></div></div>
+            <div class="bar-value">154</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="3★">3★</div>
+            <div class="bar-track"><div class="bar-fill" style="width:3%;background:#14b8a6"></div></div>
+            <div class="bar-value">20</div>
+        </div><div class="bar-row">
+            <div class="bar-label" title="2★">2★</div>
+            <div class="bar-track"><div class="bar-fill" style="width:2%;background:#14b8a6"></div></div>
+            <div class="bar-value">12</div>
+        </div></div>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> 63.4% five-star, 15.4% one-star. Bimodal distribution typical for subscription apps. The 154 one-star reviews are most strategically valuable: they reveal what creates buyer's remorse and what competitors can exploit in their messaging.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> 63.4% пятизвёздочных, 15.4% однозвёздочных. 154 однозвёздочных отзыва стратегически наиболее ценны: они раскрывают, что вызывает сожаление о покупке, и что конкуренты могут использовать в своих сообщениях.</div>
+    </div>
+</div>
+
+<div class="card card-full">
+  <h2>Competitor Signal Matrix / Матрица конкурентных сигналов</h2>
+  <div class="bilingual">
+      <div class="lang-en"><span class="lang-tag">EN</span> Ranked by keyword overlap across 15 seed searches. Note: only 2 keywords completed before Apify credits ran out, so max keyword_count = 3. max_days_running is the primary reliability signal.</div>
+      <div class="lang-ru"><span class="lang-tag">RU</span> Ранжированы по пересечению ключевых слов. Только 2 ключевых слова завершены полностью, поэтому max keyword_count = 3. max_days_running — основной сигнал надёжности.</div>
+    </div>
+  <table class="comp-table" style="margin-top:12px">
+    <tr><th>Advertiser</th><th>Keyword Matches</th><th>Ads Found</th><th>Max Days</th><th>Strategic Note</th></tr>
+    <tr>
+      <td><strong>Amazon Web Services</strong></td>
+      <td style="text-align:center">3</td>
+      <td style="text-align:center">33</td>
+      <td><span class="tag days">96d</span></td>
+      <td style="font-size:11px;color:#888">Tech giant — broad AI awareness ads, not direct competitor</td>
+    </tr><tr>
+      <td><strong>Coursera</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">12</td>
+      <td><span class="tag days">59d</span></td>
+      <td style="font-size:11px;color:#888">Direct competitor — professional upskilling + AI courses</td>
+    </tr><tr>
+      <td><strong>WhatChimp</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">10</td>
+      <td><span class="tag days">155d</span></td>
+      <td style="font-size:11px;color:#888">Small direct competitor — watch their creative angles</td>
+    </tr><tr>
+      <td><strong>Udemy</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">9</td>
+      <td><span class="tag days">120d</span></td>
+      <td style="font-size:11px;color:#888">Direct competitor — professional upskilling + AI courses</td>
+    </tr><tr>
+      <td><strong>AWSDevelopers</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">8</td>
+      <td><span class="tag days">22d</span></td>
+      <td style="font-size:11px;color:#888">Indirect — coding/dev education, partially overlapping audience</td>
+    </tr><tr>
+      <td><strong>Google Workspace</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">3</td>
+      <td><span class="tag days">19d</span></td>
+      <td style="font-size:11px;color:#888">Tech giant — broad AI awareness ads, not direct competitor</td>
+    </tr><tr>
+      <td><strong>Outskill</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">3</td>
+      <td><span class="tag days">56d</span></td>
+      <td style="font-size:11px;color:#888">Small direct competitor — watch their creative angles</td>
+    </tr><tr>
+      <td><strong>Google</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">2</td>
+      <td><span class="tag days">16d</span></td>
+      <td style="font-size:11px;color:#888">Tech giant — broad AI awareness ads, not direct competitor</td>
+    </tr><tr>
+      <td><strong>Kiro</strong></td>
+      <td style="text-align:center">2</td>
+      <td style="text-align:center">2</td>
+      <td><span class="tag days">15d</span></td>
+      <td style="font-size:11px;color:#888">Low signal — likely noise or adjacent category</td>
+    </tr><tr>
+      <td><strong>OpenAI</strong></td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">22</td>
+      <td><span class="tag days">12d</span></td>
+      <td style="font-size:11px;color:#888">Low signal — likely noise or adjacent category</td>
+    </tr><tr>
+      <td><strong>Ayatique</strong></td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">14</td>
+      <td><span class="tag days">99d</span></td>
+      <td style="font-size:11px;color:#888">Small direct competitor — watch their creative angles</td>
+    </tr><tr>
+      <td><strong>Codingal</strong></td>
+      <td style="text-align:center">1</td>
+      <td style="text-align:center">11</td>
+      <td><span class="tag days">178d</span></td>
+      <td style="font-size:11px;color:#888">Indirect — coding/dev education, partially overlapping audience</td>
+    </tr>
+  </table>
+</div>
+
+<div class="card card-full">
+  <h2>Team Tasks / Задачи для команды</h2>
+  <div class="two-col">
+    <div class="task-card">
+      <div class="task-title">Task A — Creative Strategist / Креативный стратег</div>
+      <p>
+        Open <strong>review_active_ads.csv</strong> and <strong>review_proven_ads.csv</strong>.<br><br>
+        Click each <strong>ad_library_url</strong> link to view the full creative on Facebook Ad Library.<br><br>
+        Fill in a new column <strong>manual_notes</strong> with:<br>
+        • Hook (first 3 seconds / first line of copy)<br>
+        • Format (UGC / talking head / screen recording / animation / static)<br>
+        • Visual style (polished / raw / text-heavy / minimal)<br>
+        • Pain point addressed<br>
+        • One strength + one weakness<br><br>
+        <strong>Start with proven_ads.csv, sort by days_running_real descending. The 181-day and 161-day ads are most important.</strong><br><br>
+        <em>Открой review_active_ads.csv и review_proven_ads.csv. Кликни ad_library_url, заполни manual_notes: хук, формат, стиль, боль, сила и слабость.</em>
+      </p>
+    </div>
+    <div class="task-card amber">
+      <div class="task-title">Task B — Data Analyst / Аналитик</div>
+      <p>
+        Open <strong>reddit_enriched.csv</strong> in Excel or Google Sheets.<br><br>
+        Filter column <strong>ai_llm_content_category</strong> = <strong>consideration_set_signal</strong> (211 posts).<br><br>
+        For each post, read <strong>title</strong> and open <strong>url</strong>. Note:<br>
+        • What products are being compared?<br>
+        • Which "wins" in the thread?<br>
+        • What language do users use when complaining about competitors?<br>
+        • What verbatim quotes could work as ad hooks?<br><br>
+        Also check <strong>ai_llm_key_insight</strong> column for AI-extracted insights ready to use.<br><br>
+        <em>Открой reddit_enriched.csv. Фильтр consideration_set_signal (211 постов). Запиши: какие продукты сравниваются, кто побеждает, вербальные цитаты для хуков.</em>
+      </p>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
