@@ -1,111 +1,10 @@
 # Fabrika
 
-**Market intelligence + creative generation engine. Built for Zimran.io Marketing Data Analyst test task — applied to Coursiv (io.zimran.coursiv).**
+**Market intelligence + creative generation engine. Built for Zimran Business Cup.**
 
-Fabrika turns market research into a production-ready creative system. It scrapes audience signal from Reddit, YouTube, Meta Ads Library, and app stores, runs a multi-stage AI enrichment pipeline, identifies competitors from data (not assumptions), and generates a combinatorial creative matrix.
+Fabrika turns raw market data into a production-ready creative system. It scrapes audience signal from Reddit, YouTube, Meta Ads Library, and app stores — runs a multi-stage AI enrichment pipeline — identifies competitors from data rather than assumptions — and generates a scored combinatorial creative matrix across two axes: static and video.
 
-Every insight traces back to a specific data source. Every competitor was identified by signal, not guessed.
-
----
-
-## What It Does
-
-### Data Collection
-- **Reddit scraper** — public JSON API, no auth required. Reads subreddits and queries from `topic_config.json`
-- **YouTube scraper** — YouTube Data API v3 (free tier). Reads queries from `topic_config.json`
-- **Meta Ads scraper** — Apify `curious_coder/facebook-ads-library-scraper`. Pulls ads by page name or keyword
-- **Meta Ads keyword scraper** — surfaces unknown competitors by searching 15 audience-derived keywords
-- **App reviews scraper** — `google-play-scraper` + `app-store-scraper`. Reads app IDs from `topic_config.json`
-
-### Enrichment Pipeline (inherited from VGM v2)
-```
-raw CSV → Step 1: Clean → Step 2: Features → Step 3: NLP → Step 4: LLM classify → enriched CSV
-```
-
-### Analysis
-- **ads_analysis.py** — LLM extraction on Coursiv's own ads: hook, format, LF8 driver, gap opportunities
-- **reviews_analysis.py** — LLM extraction on app reviews: pain quotes, competitor mentions, audience segment
-- **generate_dashboard.py** — HTML dashboard with bilingual EN/RU explanations of all findings
-
----
-
-## The Derivation Chain
-
-No phase uses assumed inputs. Every input traces to a prior-phase output.
-
-```
-Coursiv's own materials (landing page, app store, ads)
-  → topic_config.json (generated from search_seeds.json)
-    → Reddit + YouTube + App Reviews scraped
-      → Pain points + audience segments + consideration sets
-        → Competitor identification (keyword overlap scoring)
-          → Competitor Meta Ads pulled
-            → Strategic synthesis
-              → Creative matrix (Direction × Hook × Plot × Format)
-                → 50 creative briefs
-```
-
----
-
-## Quick Start
-
-```bash
-git clone https://github.com/Ra1-dev/fabrika.git
-cd fabrika
-
-python -m venv .venv
-source .venv/bin/activate     # Windows: .venv\Scripts\activate
-
-pip install -r lab/requirements.txt
-pip install google-play-scraper apify-client anthropic
-
-# Configure API keys
-cp lab/stage1/processing/.env.example lab/stage1/processing/.env
-# Set: ANTHROPIC_API_KEY, APIFY_API_TOKEN
-cp lab/stage1/scrapers/youtube/.env.example lab/stage1/scrapers/youtube/.env
-# Set: YOUTUBE_API_KEY
-```
-
-## Running The Pipeline
-
-```bash
-# 1. Generate topic config from Phase 1 seeds
-py lab/config_generator.py --seeds lab/search_seeds.json
-
-# 2. Scrape Coursiv's own Meta Ads (Phase 1A)
-py lab/stage2/marketing/meta_ads_scraper.py --page "Coursiv"
-
-# 3. Scrape app reviews (Phase 1B)
-py lab/stage2/marketing/app_reviews_scraper.py
-
-# 4. Scrape Reddit + YouTube (Phase 2)
-py lab/stage1/scrapers/reddit/reddit_scraper.py --max-items 2000
-py lab/stage1/scrapers/youtube/youtube_scraper_v2.py --max-items 200
-
-# 5. Run enrichment pipeline
-cd lab/stage1/processing && py run_pipeline.py
-
-# 6. Identify competitors by keyword overlap (Phase 3)
-py lab/stage2/marketing/meta_ads_keyword_scraper.py
-
-# 7. Analyze Coursiv's own ads
-py lab/stage2/marketing/ads_analysis.py
-
-# 8. Analyze app reviews
-py lab/stage2/marketing/reviews_analysis.py
-
-# 9. Generate dashboard
-py generate_dashboard.py
-```
-
----
-
-## Key Findings (Coursiv Case Study)
-
-1. **One hook rules everything** — 15 unique copy variants, all using the same LF8 driver (`to_be_superior_winning_keeping_up`). Best performer ran 181 days.
-2. **Zero format diversity** — 73% text-overlay-video, polished style. No UGC, no testimonials ever tested.
-3. **"No-Code" angle underused** — their best ad uses it, only 3 of 15 ads lead with it. Reddit shows technical barrier as 3rd largest pain category.
-4. **Hook is becoming a commodity** — Tony Robbins and Udemy now run identical positioning.
+Every insight traces back to a specific data source. Every competitor was identified by signal, not guessed. Every creative brief includes suggested copy, A/B test hypothesis, competitor context, and risk assessment.
 
 ---
 
@@ -119,7 +18,7 @@ fabrika/
 │   ├── config_generator.py            ← generates topic_config from seeds via Claude API
 │   ├── requirements.txt
 │   │
-│   ├── stage1/                        ← Data collection + enrichment (inherited from VGM v2)
+│   ├── stage1/                        ← Data collection + enrichment (VGM v2 core)
 │   │   ├── scrapers/
 │   │   │   ├── reddit/reddit_scraper.py
 │   │   │   └── youtube/youtube_scraper_v2.py
@@ -134,40 +33,135 @@ fabrika/
 │   │
 │   └── stage2/
 │       └── marketing/
-│           ├── meta_ads_scraper.py         ← Coursiv + competitor ads by page name
-│           ├── meta_ads_keyword_scraper.py ← competitor discovery by keyword
+│           ├── meta_ads_scraper.py         ← brand + competitor ads by page name
+│           ├── meta_ads_keyword_scraper.py ← competitor discovery by keyword overlap
 │           ├── app_reviews_scraper.py      ← Google Play + iOS reviews
-│           ├── ads_analysis.py             ← LLM analysis of Coursiv's ads
-│           ├── reviews_analysis.py         ← LLM analysis of app reviews
-│           └── output/
-│               ├── coursiv_ads_tiered.csv
-│               ├── coursiv_ads_high_signal.csv
-│               ├── review_active_ads.csv    ← for manual team review
-│               ├── review_proven_ads.csv    ← for manual team review
-│               ├── ads_insights.csv
-│               ├── hooks_library.csv
-│               ├── patterns_summary.md
-│               ├── app_reviews.csv
-│               ├── competitor_signals.csv
-│               └── dashboard.html           ← open in browser
+│           ├── ads_analysis.py             ← LLM analysis: hooks, LF8 drivers, gaps
+│           ├── reviews_analysis.py         ← LLM analysis: pain quotes, competitors
+│           └── output/                     ← all CSVs + dashboard.html
 │
-└── generate_dashboard.py              ← generates dashboard.html from all outputs
+├── fabrika_generator.py               ← builds scored creative matrix, outputs top 50x2
+└── generate_dashboard.py              ← generates HTML research dashboard
 ```
+
+---
+
+## The Derivation Chain
+
+No phase uses assumed inputs. Every input traces to a prior-phase output.
+
+```
+Brand materials (landing page, app store, ads)
+  → topic_config.json  ←  search_seeds.json
+    → Reddit + YouTube + App Reviews scraped
+      → Pain vocabulary + audience segments + consideration sets
+        → Competitor identification (keyword overlap scoring)
+          → Competitor Meta Ads pulled
+            → Strategic synthesis
+              → Creative matrix (Direction x Hook x Plot/Theme x Format/Offer)
+                → Top 50 static + top 50 video creative briefs
+```
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/Ra1-dev/fabrika.git
+cd fabrika
+
+python -m venv .venv
+source .venv/bin/activate     # Windows: .venv\Scripts\activate
+
+pip install -r lab/requirements.txt
+
+# Configure API keys
+cp lab/stage1/processing/.env.example lab/stage1/processing/.env
+# Set: ANTHROPIC_API_KEY, APIFY_API_TOKEN
+cp lab/stage1/scrapers/youtube/.env.example lab/stage1/scrapers/youtube/.env
+# Set: YOUTUBE_API_KEY
+```
+
+---
+
+## Running The Pipeline
+
+```bash
+# 1. Generate topic config from Phase 1 seeds
+py lab/config_generator.py --seeds lab/search_seeds.json
+
+# 2. Scrape brand Meta Ads
+py lab/stage2/marketing/meta_ads_scraper.py --page "YourBrand"
+
+# 3. Scrape app reviews
+py lab/stage2/marketing/app_reviews_scraper.py
+
+# 4. Scrape Reddit + YouTube audience signal
+py lab/stage1/scrapers/reddit/reddit_scraper.py --max-items 2000
+py lab/stage1/scrapers/youtube/youtube_scraper_v2.py --max-items 200
+
+# 5. Run enrichment pipeline (LLM classification)
+cd lab/stage1/processing && py run_pipeline.py
+
+# 6. Identify competitors by keyword overlap
+py lab/stage2/marketing/meta_ads_keyword_scraper.py
+
+# 7. Analyze brand ads + app reviews
+py lab/stage2/marketing/ads_analysis.py
+py lab/stage2/marketing/reviews_analysis.py
+
+# 8. Generate research dashboard
+py generate_dashboard.py
+
+# 9. Generate creative matrix (top 50 static + top 50 video)
+py fabrika_generator.py
+
+# Regenerate HTML report from existing data (no API cost)
+py fabrika_generator.py --html-only
+```
+
+---
+
+## Outputs
+
+| File | Description |
+|---|---|
+| `lab/stage2/marketing/output/dashboard.html` | Full research dashboard — open in browser |
+| `lab/stage2/marketing/output/static_creatives_top50.csv` | Top 50 static creative briefs |
+| `lab/stage2/marketing/output/video_creatives_top50.csv` | Top 50 video creative briefs |
+| `lab/stage2/marketing/output/fabrika_report.html` | Full creative matrix report — open in browser |
+| `lab/stage2/marketing/output/hooks_library.csv` | All hooks ranked by days running |
+| `lab/stage2/marketing/output/competitor_signals.csv` | Competitors ranked by keyword overlap |
+| `lab/stage2/marketing/output/patterns_summary.md` | Ad pattern analysis in markdown |
+
+---
+
+## Scoring Model
+
+Each creative combination is scored 0-100 across three equal dimensions:
+
+| Dimension | Weight | What it measures |
+|---|---|---|
+| Proven signal | 33 | Hook or direction validated by 30+ day ad run (brand or competitor) |
+| Gap opportunity | 33 | Angle not owned by competitors + not over-tested by brand |
+| Audience match | 34 | Reddit pain volume for this direction across 1,998 classified posts |
+
+The top 50 are selected with enforced diversity — max 7 creatives per direction, max 6 per hook — so the output spans the full strategic landscape rather than concentrating on a single high-scoring angle.
 
 ---
 
 ## API Keys Required
 
-| Key | Location | Required for |
+| Key | Location | Used for |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | `lab/stage1/processing/.env` | LLM pipeline + config generation + ads/reviews analysis |
-| `APIFY_API_TOKEN` | `lab/stage1/processing/.env` | Meta Ads scraping |
-| `YOUTUBE_API_KEY` | `lab/stage1/scrapers/youtube/.env` | YouTube scraper |
+| `ANTHROPIC_API_KEY` | `lab/stage1/processing/.env` | LLM pipeline, config generation, ads/reviews analysis, creative brief generation |
+| `APIFY_API_TOKEN` | `lab/stage1/processing/.env` | Meta Ads Library scraping |
+| `YOUTUBE_API_KEY` | `lab/stage1/scrapers/youtube/.env` | YouTube Data API v3 |
 
-Reddit scraping requires no API key.
+Reddit scraping uses the public JSON API — no key required.
 
 ---
 
 ## Built On
 
-Fabrika is built on top of [VGM v2](https://github.com/Ra1-dev/VGM) — a topic-agnostic market intelligence engine originally built for HackNU 2026. VGM provides the Reddit/YouTube scrapers, the 4-step enrichment pipeline, and the config generator. Fabrika extends it with Meta Ads scraping, app store reviews, competitor identification, ad analysis, and creative generation.
+Fabrika is built on top of [VGM v2](https://github.com/Ra1-dev/VGM) — a topic-agnostic market intelligence engine originally built for HackNU 2026. VGM provides the Reddit/YouTube scrapers, the 4-step enrichment pipeline, and the config generator. Fabrika extends it with Meta Ads scraping, app store reviews, competitor identification by keyword overlap, LLM ad analysis, and automated creative matrix generation.
